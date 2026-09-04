@@ -3,17 +3,28 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Yalix</title>
+  <title>Задачи — Yalix</title>
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
   <div class="page-shell">
     <header class="topbar">
       <div class="brand" aria-label="Yalix logo">
-        <span class="brand-mark">Y</span>
-        <span class="brand-text">Yalix</span>
+        <a href="index.html" class="brand-link">
+          <span class="brand-mark">Y</span>
+          <span class="brand-text">Yalix</span>
+        </a>
         <span class="brand-tag">task</span>
       </div>
+
+      <nav class="nav-links" aria-label="Основная навигация">
+        <a href="index.html" class="nav-link active">Задачи</a>
+        <a href="calendar-view.html" class="nav-link">Календарь</a>
+        <a href="teams.html" class="nav-link">Команды</a>
+        <a href="people.html" class="nav-link">Сотрудники</a>
+        <a href="personal-cabinet.html" class="nav-link">Кабинет</a>
+      </nav>
+
       <div class="auth-actions">
         <a id="headerLoginLink" class="auth-btn signup-btn" href="login.html">Войти</a>
         <button id="logoutBtn" class="auth-btn login-btn hidden" type="button">Выйти</button>
@@ -21,44 +32,91 @@
     </header>
 
     <main class="dashboard-shell">
-      <section class="hero-card">
-        <div class="profile-heading">
-          <div id="profileAvatar" class="profile-avatar" aria-hidden="true">?</div>
-          <div>
-            <p class="eyebrow">Личный кабинет</p>
-            <h1 id="profileName">Гость</h1>
-            <p id="profileLogin" class="profile-login">Войдите, чтобы открыть профиль</p>
+      <div class="task-board-grid">
+        <!-- Левая колонка: форма создания / редактирования задачи -->
+        <section class="hero-card">
+          <p class="eyebrow">Планирование</p>
+          <h1 id="formTitle">Создать задачу</h1>
+
+          <form id="taskForm" class="task-form">
+            <div class="field">
+              <label for="title">Название задачи *</label>
+              <input id="title" type="text" placeholder="Например: Подготовить отчет" required />
+            </div>
+
+            <div class="field">
+              <label for="description">Описание</label>
+              <textarea id="description" placeholder="Детали задачи, требования, заметки..."></textarea>
+            </div>
+
+            <div class="meta-row">
+              <div class="field small">
+                <label for="dueDate">Срок выполнения (дата)</label>
+                <input id="dueDate" type="date" />
+              </div>
+              <div class="field small">
+                <label for="dueTime">Время</label>
+                <input id="dueTime" type="time" value="18:00" />
+              </div>
+            </div>
+
+            <div class="meta-row">
+              <div class="field small">
+                <label for="taskPriority">Приоритет</label>
+                <select id="taskPriority" style="border-radius:10px; border:1px solid var(--muted-border); background:rgba(7,16,24,0.32); color:var(--text); padding:10px 12px; font:inherit;">
+                  <option value="1">Обычный</option>
+                  <option value="2">Средний</option>
+                  <option value="3">Высокий</option>
+                </select>
+              </div>
+              <div class="field small">
+                <label for="taskStatus">Статус</label>
+                <select id="taskStatus" style="border-radius:10px; border:1px solid var(--muted-border); background:rgba(7,16,24,0.32); color:var(--text); padding:10px 12px; font:inherit;">
+                  <option value="1">To Do (К выполнению)</option>
+                  <option value="2">In Progress (В процессе)</option>
+                  <option value="3">Done (Завершено)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 12px;">
+              <button id="cancelEditBtn" type="button" class="secondary-btn hidden">Отмена</button>
+              <button id="createBtn" type="submit">Создать задачу</button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Правая колонка: список задач -->
+        <section class="tasks-container">
+          <div class="tasks-header">
+            <h2>Список задач</h2>
+            <span id="tasksCounter" class="stat-label">Всего: 0</span>
           </div>
-        </div>
-        <p id="profileEmail" class="hero-text">Управляйте задачами и просматривайте рабочую информацию в одном месте.</p>
 
-        <div class="hero-actions">
-          <a id="calendarLink" class="auth-btn signup-btn" href="calendar-view.html">Открыть календарь</a>
-          <a class="auth-btn login-btn" href="people.html">Список людей</a>
-          <a class="auth-btn login-btn" href="teams.html">Команды</a>
-        </div>
-      </section>
+          <div id="tasksLoading" class="tasks-empty">Загрузка задач с сервера...</div>
+          <div id="tasksError" class="tasks-empty hidden" style="color: #f87171;"></div>
+          <div id="tasksEmpty" class="tasks-empty hidden">Задач пока нет. Создайте первую задачу в форме слева!</div>
 
-      <section class="info-grid profile-stats">
-        <article class="info-card">
-          <span class="stat-label">Задачи</span>
-          <strong id="taskCount" class="stat-value">—</strong>
-          <p>Всего задач в системе</p>
-        </article>
-
-        <article class="info-card">
-          <span class="stat-label">Роль</span>
-          <strong id="profileRole" class="stat-value">—</strong>
-          <p>Текущий уровень доступа</p>
-        </article>
-
-        <article class="info-card">
-          <span class="stat-label">Статус</span>
-          <strong id="profileStatus" class="stat-value">Гость</strong>
-          <p id="profileStatusText">Авторизуйтесь для работы с аккаунтом</p>
-        </article>
-      </section>
+          <ul id="tasks" class="tasks-list"></ul>
+        </section>
+      </div>
     </main>
+
+    <!-- Модальное окно просмотра задачи -->
+    <div id="taskModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <button id="closeModalBtn" class="modal-close" type="button" aria-label="Закрыть">×</button>
+        <p class="modal-label">Информация о задаче</p>
+        <h2 id="modalTitle">Название задачи</h2>
+        <div id="modalMeta" class="modal-meta">Срок выполнения не указан</div>
+        <p id="modalDescription" class="modal-description">Описание отсутствует.</p>
+        <div class="modal-actions">
+          <button id="cancelModalBtn" class="secondary-btn" type="button">Закрыть</button>
+          <button id="editTaskBtn" class="edit-btn" type="button">Редактировать</button>
+          <button id="deleteTaskBtn" class="danger-btn" type="button">Удалить</button>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer-bar">
       <span>Поддержка: <a href="mailto:YalixHelp@gmail.com">YalixHelp@gmail.com</a></span>
@@ -68,6 +126,6 @@
   </div>
 
   <script src="js/api.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>

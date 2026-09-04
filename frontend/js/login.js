@@ -27,8 +27,9 @@ if (form && identifier && pass) {
         body: JSON.stringify(payload)
       });
 
-      const responseUser = data && typeof data === 'object' ? data.user || data.profile || data : null;
-      const responseLogin = responseUser?.login || responseUser?.username || responseUser?.name || loginValue;
+      const rawUser = data && typeof data === 'object' ? data.user || data.profile || data : null;
+      const responseUser = rawUser ? (typeof normalizeUser === 'function' ? normalizeUser(rawUser) : rawUser) : null;
+      const responseLogin = responseUser?.name || responseUser?.login || responseUser?.username || loginValue;
       const storage = document.getElementById('rememberMe')?.checked ? localStorage : sessionStorage;
       if (data?.token) {
         localStorage.removeItem('yalix_token');

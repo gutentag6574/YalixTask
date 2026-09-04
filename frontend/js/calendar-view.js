@@ -209,7 +209,10 @@ async function addEventForDate(date, eventText, startDate, endDate, startTime) {
   const title = eventText && eventText.trim();
   if (!title) return;
 
-  const deadline = `${endDate || startDate || key}T${startTime || '09:00'}:00`;
+  const rawDateStr = `${endDate || startDate || key}T${startTime || '09:00'}:00`;
+  const parsedDate = new Date(rawDateStr);
+  const deadline = !isNaN(parsedDate.getTime()) ? parsedDate.toISOString() : new Date().toISOString();
+
   const savedTask = await apiRequest('/tasks', {
     method: 'POST',
     body: JSON.stringify({

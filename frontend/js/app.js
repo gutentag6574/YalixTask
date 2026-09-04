@@ -37,9 +37,11 @@ function getUserName(user) {
 function renderProfile(user) {
   const isAuthenticated = Boolean(user);
   const name = isAuthenticated ? getUserName(user) : 'Гость';
-  const login = isAuthenticated ? (user.login || 'Без логина') : 'Войдите, чтобы открыть профиль';
-  const email = isAuthenticated ? (user.email || 'Электронная почта не указана') : 'Управляйте задачами и просматривайте рабочую информацию в одном месте.';
-  const role = isAuthenticated ? (user.role_name || user.roleName || 'Роль не указана') : '—';
+  const emailVal = user ? (user.email || user.user_email || '') : '';
+  const email = isAuthenticated ? (emailVal || 'Электронная почта не указана') : 'Управляйте задачами и просматривайте рабочую информацию в одном месте.';
+  const roleId = user ? (user.role_id ?? user.roleId ?? null) : null;
+  const roleNameFallback = roleId === 1 ? 'Администратор' : (roleId === 2 ? 'Пользователь' : 'Пользователь');
+  const role = isAuthenticated ? (user.role_name || user.roleName || roleNameFallback) : '—';
 
   profileName.textContent = name;
   profileLogin.textContent = isAuthenticated ? `@${login}` : login;
